@@ -19,12 +19,16 @@ class UserProfile extends Model
         'activity_level',
         'goal',
         'daily_calorie_target',
+        'daily_distance_goal',
+        'preferred_activities',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
         'height' => 'decimal:2',
         'initial_weight' => 'decimal:2',
+        'daily_distance_goal' => 'decimal:2',
+        'preferred_activities' => 'array',
     ];
 
     public function user(): BelongsTo
