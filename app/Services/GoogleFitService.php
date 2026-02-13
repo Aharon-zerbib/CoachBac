@@ -32,6 +32,49 @@ class GoogleFitService
         $this->client->setPrompt('select_account consent');
     }
 
+    public function getWeeklySteps(User $user)
+    {
+        if (!$user->google_token) return [];
+
+        $this->client->setAccessToken($user->google_token);
+        $fitness = new Fitness($this->client);
+        
+        $endTime = Carbon::now()->endOfDay()->getTimestamp() * 1000;
+        $startTime = Carbon::now()->subDays(6)->startOfDay()->getTimestamp() * 1000;
+
+        $aggRequest = new \Google\Service\Fitness\AggregateRequest();
+        $aggBySteps = new \Google\Service\Fitness\AggregateBy();
+        $aggBySteps->setDataTypeName('com.google.step_count.delta');
+        $aggRequest->setAggregateBy([$aggBySteps]);
+        
+        $bt = new \Google\Service\Fitness\BucketByTime();
+        $bt->setDurationMillis(86400000);
+        $aggRequest->setBucketByTime($bt);
+        
+        $aggRequest->setStartTimeMillis($startTime);
+        $aggRequest->setEndTimeMillis($endTime);
+
+        $stats = [];
+        try {
+            $res = $fitness->users_dataset->aggregate('me', $aggRequest);
+            foreach ($res->getBucket() as $i => $bucket) {
+                $date = Carbon::now()->subDays(6 - $i);
+                $val = 0;
+                if (!empty($bucket->getDataset()[0]->getPoint())) {
+                    $val = $bucket->getDataset()[0]->getPoint()[0]->getValue()[0]->getIntVal() ?? 0;
+                }
+                $stats[] = [
+                    'date' => $date->format('Y-m-d'),
+                    'label' => $date->translatedFormat('D j'),
+                    'steps' => $val
+                ];
+            }
+        } catch (\Exception $e) {
+            \Log::error("Weekly Steps Error: " . $e->getMessage());
+        }
+        return $stats;
+    }
+
     public function getSyncData(User $user, $date = null)
     {
         if (!$user->google_token) return null;

@@ -17,6 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [ProfileController::class, 'store']);
 
     Route::get('/stats', [ActivityController::class, 'stats']);
+    Route::get('/stats/weekly', [ActivityController::class, 'weeklyStats']);
     Route::get('/analysis', [ActivityController::class, 'dailyAnalysis']);
     Route::get('/activities', [ActivityController::class, 'index']);
     Route::post('/activities', [ActivityController::class, 'store']);
