@@ -57,6 +57,12 @@ class MealController extends Controller
 
     public function index(Request $request)
     {
-        return response()->json($request->user()->meals()->latest()->get());
+        $query = $request->user()->meals();
+
+        if ($request->has('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        return response()->json($query->latest()->get());
     }
 }

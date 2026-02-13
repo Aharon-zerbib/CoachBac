@@ -10,20 +10,24 @@ class ForceCors
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // On intercepte les requêtes de test du navigateur (Preflight)
+        $origin = 'http://localhost:3000';
+
         if ($request->isMethod('OPTIONS')) {
             return response('', 200)
-                ->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Origin', $origin)
                 ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                ->header('Access-Control-Allow-Headers', '*');
+                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN')
+                ->header('Access-Control-Allow-Credentials', 'true');
         }
 
         $response = $next($request);
 
-        // On force les headers sur la réponse finale
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
+        if (method_exists($response, 'header')) {
+            $response->header('Access-Control-Allow-Origin', $origin)
+                     ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN')
+                     ->header('Access-Control-Allow-Credentials', 'true');
+        }
 
         return $response;
     }

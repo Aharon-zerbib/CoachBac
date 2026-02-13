@@ -13,7 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // On place notre garde-frontière tout en haut
+        $middleware->statefulApi();
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
         $middleware->prepend(ForceCors::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
