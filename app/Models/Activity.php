@@ -18,7 +18,6 @@ class Activity extends Model
         'distance',
         'duration',
         'steps',
-        'path_data',
     ];
 
     /**
@@ -29,7 +28,6 @@ class Activity extends Model
     protected function casts(): array
     {
         return [
-            'path_data' => 'array',
             'distance' => 'decimal:2',
             'duration' => 'integer',
             'steps' => 'integer',

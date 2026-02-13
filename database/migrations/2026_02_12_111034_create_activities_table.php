@@ -18,7 +18,6 @@ return new class extends Migration
             $table->decimal('distance', 10, 2)->default(0); // en km
             $table->integer('duration')->default(0); // en secondes
             $table->integer('steps')->default(0);
-            $table->json('path_data')->nullable(); // Coordonnées GPS
             $table->timestamps();
         });
     }

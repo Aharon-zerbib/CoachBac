@@ -31,7 +31,6 @@ class ActivityController extends Controller
             'distance' => 'required|numeric',
             'duration' => 'required|integer',
             'steps' => 'nullable|integer',
-            'path_data' => 'nullable|array',
         ]);
 
         $activity = $request->user()->activities()->create($validated);
